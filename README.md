@@ -14,4 +14,5 @@ the format of images:
               another class (sunflower folder)
 2. validation folder: one class (daisy folder)
                    another class (sunflower folder)
+
 #using this kind of format, I do not need to add label in excel/csv file
