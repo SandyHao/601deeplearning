@@ -1,3 +1,4 @@
+#copyright:http://blog.csdn.net/wyl1987527/article/details/68168115
 #load VGG19model and visiualization the output in each layer during forward propagation 
 import tensorflow as tf 
 import numpy as np 
