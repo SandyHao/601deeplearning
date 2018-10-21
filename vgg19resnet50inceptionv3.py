@@ -1,7 +1,5 @@
-#作者：pengdali 
-#来源：CSDN 
-#原文：https://blog.csdn.net/pengdali/article/details/79050662 
-#版权声明：本文为博主原创文章，转载请附上博文链接！
+#source：CSDN 
+#copyright：https://blog.csdn.net/pengdali/article/details/79050662 
 
 # -*- coding: utf-8 -*-
 import os
@@ -16,7 +14,7 @@ from keras.preprocessing.image import ImageDataGenerator
 import matplotlib.pyplot as plt
  
 class PowerTransferMode:
-    #数据准备
+    #data generator; it will cause trouble to computer if load all the images into ram at the same time
     def DataGen(self, dir_path, img_row, img_col, batch_size, is_train):
         if is_train:
             datagen = ImageDataGenerator(rescale=1./255,
@@ -34,57 +32,57 @@ class PowerTransferMode:
  
         return generator
  
-    #ResNet模型
+    #ResNet model
     def ResNet50_model(self, lr=0.005, decay=1e-6, momentum=0.9, nb_classes=2, img_rows=197, img_cols=197, RGB=True, is_plot_model=False):
         color = 3 if RGB else 1
         base_model = ResNet50(weights='imagenet', include_top=False, pooling=None, input_shape=(img_rows, img_cols, color),
                               classes=nb_classes)
  
-        #冻结base_model所有层，这样就可以正确获得bottleneck特征
+        # fix all the layers of base_model，get correct bottleneck feature
         for layer in base_model.layers:
             layer.trainable = False
  
         x = base_model.output
-        #添加自己的全链接分类层
+        #add own full connection layer
         x = Flatten()(x)
         #x = GlobalAveragePooling2D()(x)
         #x = Dense(1024, activation='relu')(x)
         predictions = Dense(nb_classes, activation='softmax')(x)
  
-        #训练模型
+        #train model
         model = Model(inputs=base_model.input, outputs=predictions)
         sgd = SGD(lr=lr, decay=decay, momentum=momentum, nesterov=True)
         model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
  
-        #绘制模型
+        #plot model
         if is_plot_model:
             plot_model(model, to_file='resnet50_model.png',show_shapes=True)
  
         return model
  
  
-    #VGG模型
+    #VGG model
     def VGG19_model(self, lr=0.005, decay=1e-6, momentum=0.9, nb_classes=2, img_rows=197, img_cols=197, RGB=True, is_plot_model=False):
         color = 3 if RGB else 1
         base_model = VGG19(weights='imagenet', include_top=False, pooling=None, input_shape=(img_rows, img_cols, color),
                               classes=nb_classes)
  
-        #冻结base_model所有层，这样就可以正确获得bottleneck特征
+        # fix all the layers of base_model，get correct bottleneck feature
         for layer in base_model.layers:
             layer.trainable = False
  
         x = base_model.output
-        #添加自己的全链接分类层
+        #add own full connection layer
         x = GlobalAveragePooling2D()(x)
         x = Dense(1024, activation='relu')(x)
         predictions = Dense(nb_classes, activation='softmax')(x)
  
-        #训练模型
+        #train model
         model = Model(inputs=base_model.input, outputs=predictions)
         sgd = SGD(lr=lr, decay=decay, momentum=momentum, nesterov=True)
         model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
  
-        # 绘图
+        #plot model
         if is_plot_model:
             plot_model(model, to_file='vgg19_model.png',show_shapes=True)
  
@@ -98,30 +96,30 @@ class PowerTransferMode:
                            input_shape=(img_rows, img_cols, color),
                            classes=nb_classes)
  
-        # 冻结base_model所有层，这样就可以正确获得bottleneck特征
+        # fix all the layers of base_model，get correct bottleneck feature
         for layer in base_model.layers:
             layer.trainable = False
  
         x = base_model.output
-        # 添加自己的全链接分类层
+        #add own full connection layer
         x = GlobalAveragePooling2D()(x)
         x = Dense(1024, activation='relu')(x)
         predictions = Dense(nb_classes, activation='softmax')(x)
  
-        # 训练模型
+        #train model
         model = Model(inputs=base_model.input, outputs=predictions)
         sgd = SGD(lr=lr, decay=decay, momentum=momentum, nesterov=True)
         model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
  
-        # 绘图
+        #plot model
         if is_plot_model:
             plot_model(model, to_file='inception_v3_model.png', show_shapes=True)
  
         return model
  
-    #训练模型
+    #train model
     def train_model(self, model, epochs, train_generator, steps_per_epoch, validation_generator, validation_steps, model_url, is_load_model=False):
-        # 载入模型
+        #load model
         if is_load_model and os.path.exists(model_url):
             model = load_model(model_url)
  
@@ -131,11 +129,11 @@ class PowerTransferMode:
             epochs=epochs,
             validation_data=validation_generator,
             validation_steps=validation_steps)
-        # 模型保存
+        # save model
         model.save(model_url,overwrite=True)
         return history_ft
  
-    # 画图
+    # plot loss
     def plot_training(self, history):
       acc = history.history['acc']
       val_acc = history.history['val_acc']
@@ -158,7 +156,7 @@ if __name__ == '__main__':
  
     transfer = PowerTransferMode()
  
-    #得到数据
+    #load data
     train_generator = transfer.DataGen('./data2/train', image_size, image_size, batch_size, True)
     validation_generator = transfer.DataGen('./data2/validation', image_size, image_size, batch_size, False)
  
@@ -174,5 +172,5 @@ if __name__ == '__main__':
     #model = transfer.InceptionV3_model(nb_classes=2, img_rows=image_size, img_cols=image_size, is_plot_model=True)
     #history_ft = transfer.train_model(model, 10, train_generator, 60, validation_generator, 60, 'inception_v3_model_weights.h5', is_load_model=False)
  
-    # 训练的acc_loss图
+    #plot acc_loss
     transfer.plot_training(history_ft)
