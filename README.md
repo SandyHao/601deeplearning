@@ -2,6 +2,7 @@
 mini project2, identify objects
 
 tried different methods
+
 0. basic CNN
 1. googlenet_inceptionV3
 2. vgg16+tensorflow
