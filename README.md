@@ -10,8 +10,8 @@ tried different methods
 4. Resnet
 
 the format of images:
-train folder: one class (daisy folder)
+1. train folder: one class (daisy folder)
               another class (sunflower folder)
-validation folder: one class (daisy folder)
+2. validation folder: one class (daisy folder)
                    another class (sunflower folder)
-using this kind of format, I do not need to add label in excel/csv file
+#using this kind of format, I do not need to add label in excel/csv file
