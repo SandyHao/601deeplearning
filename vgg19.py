@@ -32,35 +32,6 @@ class PowerTransferMode:
  
         return generator
  
-    #ResNet model
-    def ResNet50_model(self, lr=0.005, decay=1e-6, momentum=0.9, nb_classes=2, img_rows=197, img_cols=197, RGB=True, is_plot_model=False):
-        color = 3 if RGB else 1
-        base_model = ResNet50(weights='imagenet', include_top=False, pooling=None, input_shape=(img_rows, img_cols, color),
-                              classes=nb_classes)
- 
-        # fix all the layers of base_model，get correct bottleneck feature
-        for layer in base_model.layers:
-            layer.trainable = False
- 
-        x = base_model.output
-        #add own full connection layer
-        x = Flatten()(x)
-        #x = GlobalAveragePooling2D()(x)
-        #x = Dense(1024, activation='relu')(x)
-        predictions = Dense(nb_classes, activation='softmax')(x)
- 
-        #train model
-        model = Model(inputs=base_model.input, outputs=predictions)
-        sgd = SGD(lr=lr, decay=decay, momentum=momentum, nesterov=True)
-        model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
- 
-        #plot model
-        if is_plot_model:
-            plot_model(model, to_file='resnet50_model.png',show_shapes=True)
- 
-        return model
- 
- 
     #VGG model
     def VGG19_model(self, lr=0.005, decay=1e-6, momentum=0.9, nb_classes=2, img_rows=197, img_cols=197, RGB=True, is_plot_model=False):
         color = 3 if RGB else 1
@@ -88,35 +59,7 @@ class PowerTransferMode:
  
         return model
  
-    # InceptionV3模型
-    def InceptionV3_model(self, lr=0.005, decay=1e-6, momentum=0.9, nb_classes=2, img_rows=197, img_cols=197, RGB=True,
-                    is_plot_model=False):
-        color = 3 if RGB else 1
-        base_model = InceptionV3(weights='imagenet', include_top=False, pooling=None,
-                           input_shape=(img_rows, img_cols, color),
-                           classes=nb_classes)
- 
-        # fix all the layers of base_model，get correct bottleneck feature
-        for layer in base_model.layers:
-            layer.trainable = False
- 
-        x = base_model.output
-        #add own full connection layer
-        x = GlobalAveragePooling2D()(x)
-        x = Dense(1024, activation='relu')(x)
-        predictions = Dense(nb_classes, activation='softmax')(x)
- 
-        #train model
-        model = Model(inputs=base_model.input, outputs=predictions)
-        sgd = SGD(lr=lr, decay=decay, momentum=momentum, nesterov=True)
-        model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
- 
-        #plot model
-        if is_plot_model:
-            plot_model(model, to_file='inception_v3_model.png', show_shapes=True)
- 
-        return model
- 
+    
     #train model
     def train_model(self, model, epochs, train_generator, steps_per_epoch, validation_generator, validation_steps, model_url, is_load_model=False):
         #load model
@@ -160,17 +103,10 @@ if __name__ == '__main__':
     train_generator = transfer.DataGen('./data2/train', image_size, image_size, batch_size, True)
     validation_generator = transfer.DataGen('./data2/validation', image_size, image_size, batch_size, False)
  
-    #VGG19
+    VGG19
     model = transfer.VGG19_model(nb_classes=2, img_rows=image_size, img_cols=image_size, is_plot_model=False)
     history_ft = transfer.train_model(model, 10, train_generator, 60, validation_generator, 60, 'vgg19_model_weights.h5', is_load_model=False)
  
-    #ResNet50
-    #model = transfer.ResNet50_model(nb_classes=2, img_rows=image_size, img_cols=image_size, is_plot_model=False)
-    #history_ft = transfer.train_model(model, 10, train_generator, 60, validation_generator, 60, 'resnet50_model_weights.h5', is_load_model=False)
- 
-    #InceptionV3
-    #model = transfer.InceptionV3_model(nb_classes=2, img_rows=image_size, img_cols=image_size, is_plot_model=True)
-    #history_ft = transfer.train_model(model, 10, train_generator, 60, validation_generator, 60, 'inception_v3_model_weights.h5', is_load_model=False)
- 
+   
     #plot acc_loss
     transfer.plot_training(history_ft)
