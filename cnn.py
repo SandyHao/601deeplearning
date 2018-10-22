@@ -134,7 +134,7 @@ def minibatches(inputs=None, targets=None, batch_size=None, shuffle=False):
 
 #train and test
 
-n_epoch=10
+n_epoch=9
 batch_size=64
 sess=tf.InteractiveSession()  
 sess.run(tf.global_variables_initializer())
