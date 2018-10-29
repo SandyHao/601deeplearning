@@ -13,7 +13,7 @@ VALID_IMG_COUNT = 400
 MAX_TRAIN_STEPS = 200
 AUGMENT_BRIGHTNESS = False
 
-#----------------------------------------------- !ls ../input
+!ls ../input
 
 import os
 import numpy as np # linear algebra
@@ -21,8 +21,8 @@ import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
 from skimage.io import imread
 import matplotlib.pyplot as plt
 from skimage.segmentation import mark_boundaries
-#from skimage.util.montage import montage2d as montage
-from skimage.util import montage2d as montage
+from skimage.util.montage import montage2d as montage
+#from skimage.util import montage2d as montage
 montage_rgb = lambda x: np.stack([montage(x[:, :, :, i]) for i in range(x.shape[3])], -1)
 ship_dir = './project_train'
 train_image_dir = os.path.join(ship_dir, 'train')
