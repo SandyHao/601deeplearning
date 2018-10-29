@@ -1,1 +1,4 @@
 
+run unet1 first, save fullres_model.h5
+
+then run unet2
