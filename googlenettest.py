@@ -1,15 +1,15 @@
-#作者：阿卡蒂奥 
-#来源：CSDN 
-#原文：https://blog.csdn.net/akadiao/article/details/78634431?utm_source=copy 
-#版权声明：本文为博主原创文章，转载请附上博文链接！
+#suthor：阿卡蒂奥 
+#source：CSDN 
+#url：https://blog.csdn.net/akadiao/article/details/78634431?utm_source=copy 
+#copyright reserved
 
 import tensorflow as tf
 slim = tf.contrib.slim
 trunc_normal = lambda stddev: tf.truncated_normal_initializer(0.0, stddev)
 
-# 生成默认参数 
-def inception_v3_arg_scope(weight_decay=0.00004,                      # L2正则weight_decay
-                           stddev=0.1,                                # 标准差
+# generate initial parameters
+def inception_v3_arg_scope(weight_decay=0.00004,                      # L2 regular weight_decay
+                           stddev=0.1,                                # standard deviation
                            batch_norm_var_collection='moving_vars'):
     batch_norm_params = { 
         'decay': 0.9997, 
@@ -22,22 +22,22 @@ def inception_v3_arg_scope(weight_decay=0.00004,                      # L2正则
             'moving_variance': [batch_norm_var_collection],
         }
     }
-    # 提供了新的范围名称scope name 
-    # 对slim.conv2d和slim.fully_connected两个函数的参数自动赋值 
+    # provide new scope name 
+    # automatically assign value to slim.conv2d & slim.fully_connected 
     with slim.arg_scope([slim.conv2d, slim.fully_connected],
                         weights_regularizer=slim.l2_regularizer(weight_decay)): 
         with slim.arg_scope(
-            [slim.conv2d], # 对卷积层的参数赋默认值
-            weights_initializer=tf.truncated_normal_initializer(stddev=stddev), # 权重初始化器
-            activation_fn=tf.nn.relu, # 激活函数用ReLU
-            normalizer_params=batch_norm_params) as sc: # 标准化器参数用batch_norm_params
+            [slim.conv2d], # assign value to convolution layer
+            weights_initializer=tf.truncated_normal_initializer(stddev=stddev), # initizlize weights
+            activation_fn=tf.nn.relu, # activation function ReLU
+            normalizer_params=batch_norm_params) as sc: # normalization function: batch_norm_params
             return sc
             
-# inputs为输入图片数据的tensor(299x299x3),scope为包含了函数默认参数的环境
+# inputs the tensor(299x299x3) of images, environment: scope
 def inception_v3_base(inputs, scope=None):
-    # 保存某些关键节点
+    # save key points
     end_points = {}
-    # 定义InceptionV3的网络结构
+    # structure of InceptionV3 network
     with tf.variable_scope(scope, 'InceptionV3', [inputs]):
         # 设置卷积/最大池化/平均池化的默认步长为1,padding模式为VALID
         # 设置Inception模块组的默认参数
